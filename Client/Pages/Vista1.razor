@@ -1,0 +1,38 @@
+﻿@using EnergyDistribution.Client.Services;
+@using EnergyDistribution.Client.Shared.Buttons;
+@using EnergyDistribution.Client.Shared.Cards
+@using EnergyDistribution.Client.Shared.Table
+@using EnergyDistribution.Shared.OutDTO;
+@using Microsoft.AspNetCore.Authorization
+
+@page "/vista1"
+@attribute [Authorize(Roles = "Administrador,Operario")]
+
+<PageTitle>Vista 1</PageTitle>
+
+<h2>Vista 1</h2>
+
+<Loading @ref="_loading" />
+<Modal @ref="_modal" />
+
+<!--BODY-->
+
+
+<Footer/>
+
+@code {
+
+
+    Modal? _modal = new Modal();
+    Loading? _loading = new Loading();
+
+    protected override async void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            api.Modal = _modal!;
+            api.Loading = _loading!;
+        }
+    }
+
+}

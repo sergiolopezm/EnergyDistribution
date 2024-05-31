@@ -1,0 +1,57 @@
+﻿@using EnergyDistribution.Client.Pages
+@using EnergyDistribution.Client.Services;
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider autenticacionProvider
+@inject NavigationManager navManager
+
+
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(App).Assembly">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <NotAuthorized>
+                    @if (context.User.Identity?.IsAuthenticated != true)
+                    {
+                        navManager.NavigateTo("/");
+                    }
+                    else
+                    {
+                        if (noAutorizado)
+                        {
+                            <div class="alert alert-dark" role="alert">
+                                <h4 class="alert-heading">Acceso no autorizado</h4>
+                                <p>No está autorizado para acceder a esta página. Por favor, inicie sesión con las credenciales adecuadas.</p>
+                                <hr>
+                                <p class="mb-0">Si cree que esto es un error, póngase en contacto con el administrador del sistema.</p>
+                            </div>
+                        }
+                    }
+                </NotAuthorized>
+            </AuthorizeRouteView>
+
+        </Found>
+
+        <NotFound>
+            <PageTitle>Not found</PageTitle>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p role="alert">Sorry, there's nothing at this address.</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
+
+</CascadingAuthenticationState>
+
+@code {
+
+    bool noAutorizado = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(1);
+        var autenticacionExt = (Autenticacion)autenticacionProvider;
+        var usuario = await autenticacionExt.ObtenerSesionUsuario();
+        await autenticacionExt.ActualizarEstadoAutenticion(usuario);
+        noAutorizado = true;
+
+    }
+}

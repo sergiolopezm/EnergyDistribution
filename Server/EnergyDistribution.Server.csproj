@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.22" />
+    <PackageReference Include="System.Runtime" Version="4.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Client\EnergyDistribution.Client.csproj" />
+    <ProjectReference Include="..\EnergyDistribution.Dominio\EnergyDistribution.Domain.csproj" />
+    <ProjectReference Include="..\EnergyDistribution.Infraestructura\EnergyDistribution.Infraestructure.csproj" />
+    <ProjectReference Include="..\EnergyDistribution.Util\EnergyDistribution.Util.csproj" />
+    <ProjectReference Include="..\Shared\EnergyDistribution.Shared.csproj" />
+  </ItemGroup>
+
+
+</Project>

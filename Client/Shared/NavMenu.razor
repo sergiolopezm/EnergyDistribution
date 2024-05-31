@@ -1,0 +1,119 @@
+﻿@using EnergyDistribution.Client.Services;
+@using EnergyDistribution.Shared.OutDTO;
+@using Microsoft.AspNetCore.Components.Authorization;
+@using System.Security.Claims;
+@inject AuthenticationStateProvider autenticacionProvider
+
+
+
+<div style="max-height: 100vh; overflow-y: auto;">
+    <div class="top-row ps-3 navbar navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="">EnergyDistribution</a>
+            <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </div>
+
+    <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+        <nav class="flex-column">
+            <AuthorizeView>
+
+                <div class="nav-item px-3 m-3 info-usuario" style="color:whitesmoke;">
+                    <div class="col-12">
+                        <strong>Usuario </strong><span class="oi oi-person" aria-hidden="true"></span>
+                    </div>
+                    <div class="col-12 mb-2">
+                        @context.User.Identity!.Name
+
+                    </div>
+                    @*<div class="col-12">
+                        <strong>Prueba </strong><span class="oi oi-book" aria-hidden="true"></span>
+                    </div>
+                    <div class="col-12 mb-1">
+                        @usuario.NombrePrueba
+                    </div>*@
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="vista1" Match="NavLinkMatch.All">
+                        <span class="oi oi-box" aria-hidden="true"></span> Vista 1
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="vista2" Match="NavLinkMatch.All">
+                        <span class="oi oi-box" aria-hidden="true"></span> Vista 2
+                    </NavLink>
+                </div>
+            </AuthorizeView>
+
+            <AuthorizeView Roles="Administrador">
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="vista3" Match="NavLinkMatch.All">
+                        <span class="oi oi-box" aria-hidden="true"></span> Vista 3
+                    </NavLink>
+                </div>
+            </AuthorizeView>
+
+            <div class="nav-item px-3">
+                <NavLink class="nav-link pointer-button" @onclick="CerrarSesion" Match="NavLinkMatch.All">
+                    <span class="oi oi-account-logout" aria-hidden="true"></span> Cerrar Sesión
+                </NavLink>
+            </div>
+
+        </nav>
+    </div>
+</div>
+
+<style>
+    /* Contenedor del scrollbar */
+    ::-webkit-scrollbar {
+        width: 7px; /* Ancho del scrollbar */
+    }
+
+    /* Track del scrollbar */
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1; /* Color de fondo del track */
+    }
+
+    /* Thumb (agarre) del scrollbar */
+    ::-webkit-scrollbar-thumb {
+        background: #198754; /* Color del thumb */
+        /* Borde redondeado del thumb */
+    }
+
+        /* Cambia el color del thumb cuando se está desplazando */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555; /* Color del thumb al pasar el cursor */
+        }
+</style>
+
+
+@code {
+    private bool collapseNavMenu = true;
+
+    UsuarioOut usuario = new UsuarioOut();
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    protected async override void OnInitialized()
+    {
+        var autenticacionExt = (Autenticacion)autenticacionProvider;
+        usuario = await autenticacionExt.ObtenerSesionUsuario();
+        StateHasChanged();
+    }
+
+    private async Task CerrarSesion()
+    {
+        var autenticacionExt = (Autenticacion)autenticacionProvider;
+        await autenticacionExt.ActualizarEstadoAutenticion(null);
+    }
+
+}

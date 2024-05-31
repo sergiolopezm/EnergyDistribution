@@ -1,0 +1,188 @@
+﻿@page "/"
+@layout LoginLayout
+@using EnergyDistribution.Shared
+@using EnergyDistribution.Client.Services
+@using EnergyDistribution.Shared.InDTO;
+@using EnergyDistribution.Shared.OutDTO;
+@using Microsoft.AspNetCore.Components.Authorization;
+@inject HttpClient httClient
+@inject AuthenticationStateProvider autenticaionProvider
+@inject NavigationManager navManager
+@inject IJSRuntime JS
+@inject GoogleReCaptcha _googlereCaptchaService
+@inject Api api
+
+<Loading @ref="loading" />
+<Modal @ref="modal"/>
+
+<section class="gradient-form" style="background-color: #d3d3d3;">
+    <div class="container py-3 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-xl-5 col-lg-6 col-md-8 col-sm-11 col-xs-9">
+                <div class="card rounded-3 text-black">
+                    <div class="row g-0 container-login">
+
+                        <div class="card-body p-md-4 mx-md-4">
+                            <div class="text-center">
+                                <img src="https://tgscolombia.com/wp-content/uploads/2021/04/logo-o.png"
+                                     style="width: 300px;" alt="logo">
+                                <h5 class="mt-4 mb-4 pb-1">Sistema de EnergyDistribution</h5>
+                            </div>
+                            <form @onsubmit="IniciarSesion">
+                                @*<div class="mb-3">
+                                    <label class="form-label">Prueba</label>
+                                    <select class="form-select" @bind="@usuario.IdPrueba" id="idPrueba" required>
+                                        <option value="0">Seleccione una prueba</option>
+                                        @foreach (var item in resumenPruebas)
+                                        {
+                                            <option value="@item.IdPrueba">@item.NombrePrueba</option>
+                                        }
+                                    </select>
+                                </div>*@
+                                <div class="mb-3">
+                                    <label class="form-label">Usuario</label>
+                                    <input @bind="usuario.NombreUsuario" type="text" id="inputIdUsuario" class="form-control" autocomplete="off"
+                                           placeholder="Ingrese Usuario" required />
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label">Contraseña</label>
+                                    <input @bind="usuario.Contraseña" type="password" id="inputContraseña" class="form-control" autocomplete="off"
+                                           placeholder="Ingrese Contraseña" required />
+                                </div>
+                                <div class="text-center">
+                                    <label class="form-label"></label>
+                                    <button type="submit" class="btn-success btn-lg active mb-3 button-login form-control">
+                                        Ingresar
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+
+    private Loading? loading = new Loading();
+    private Modal? modal = new Modal();
+    private string tockenCaptcha = "";
+    private UsuarioIn usuario = new UsuarioIn();
+    
+    //private List<ResumenPruebaOutDTO> resumenPruebas = new List<ResumenPruebaOutDTO>();
+
+    protected override async void OnAfterRender(bool firstRender)
+    {
+        try
+        {
+            if (firstRender)
+            {
+                api.Modal = modal!;
+                api.Loading = loading!;
+                var autenticacionExt = (Autenticacion)autenticaionProvider;
+                var sesion = await autenticacionExt.ObtenerSesionUsuario();
+                if (sesion != null)
+                {
+                    navManager.NavigateTo("/vista1");
+                    return;
+                }
+            }
+            tockenCaptcha = await JS.InvokeAsync<string>("runCaptcha");
+        }
+        catch (Exception error)
+        {
+            Console.Write(error.ToString());
+        }
+
+    }
+
+
+    private async Task VerificarSesion()
+    {
+        try
+        {
+            var autenticacionExt = (Autenticacion)autenticaionProvider;
+            var sesion = await autenticacionExt.ObtenerSesionUsuario();
+            if (sesion != null)
+            {
+                navManager.NavigateTo("/vista1");
+            }
+        }
+        catch (Exception error)
+        {
+            Console.WriteLine(error.ToString());
+        }
+    }
+
+    private async Task IniciarSesion()
+    {
+        loading!.Open();
+        if (VerificarInformacionUsuario())
+        {
+            await JS.InvokeVoidAsync("limpiarFocoDeTodosLosCampos");
+            if (await ValidarReCaptcha())
+            {
+                usuario.NombreUsuario = usuario.NombreUsuario!.Trim();
+                var respuesta = await api!.PostApiAcceso<UsuarioOut>("api/Usuario/Autenticar", usuario, timeOut: 1)!;
+                if (respuesta != null)
+                {
+                    if (respuesta.Exito == true)
+                    {
+                        var autenticacionExt = (Autenticacion)autenticaionProvider;
+                        await autenticacionExt.ActualizarEstadoAutenticion(respuesta.Resultado!);
+                        navManager.NavigateTo("/vista1");
+                    }
+                }
+                usuario = new UsuarioIn();
+            }
+        }
+        loading.Close();
+    }
+
+    private async Task<bool> ValidarReCaptcha()
+    {
+        try
+        {
+            bool reCaptchaValidado = true; //await _googlereCaptchaService.reVerify(tockenCaptcha);
+            if (reCaptchaValidado)
+            {
+                OnAfterRender(false);
+                return true;
+            }
+            else
+            {
+                modal!.OpenModalError("Recaptcha invalido", "Se presento un error al realizar la validación del recaptcha. Por favor, intente nuevamente");
+            }
+        }
+        catch (Exception error)
+        {
+            modal!.OpenModalError("Error en recaptcha", "Se presento un error al realizar la validación del recaptcha. Por favor, verifique su conexión a internet e intente nuevamente");
+            Console.Write(error.HResult);
+        }
+        OnAfterRender(false);
+        return false;
+    }
+
+    private bool VerificarInformacionUsuario()
+
+    {
+        string mensajeError = "";
+        if (string.IsNullOrEmpty(usuario.NombreUsuario) || usuario.NombreUsuario.Trim() == "")
+        {
+            mensajeError = mensajeError + "No se ha ingresado un usuario. ";
+        }
+        if (string.IsNullOrEmpty(usuario.Contraseña) || usuario.Contraseña.Trim() == "")
+        {
+            mensajeError = mensajeError + "No se ha ingresado una contraseña. ";
+        }
+        if (mensajeError != "")
+        {
+            modal!.OpenModalError("Parámetros incorrectos", mensajeError);
+            return false;
+        }
+        return true;
+    }
+
+}

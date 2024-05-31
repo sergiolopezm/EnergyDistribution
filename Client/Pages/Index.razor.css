@@ -1,0 +1,39 @@
+﻿.gradient-custom-2 {
+    /* fallback for old browsers */
+    background: #fccb90;
+    /* Chrome 10-25, Safari 5.1-6 */
+    background: -webkit-linear-gradient(to right, #0E6237, #0A4E2A, #083E20, #052F18);
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: linear-gradient(to right, #0E6237, #0A4E2A, #083E20, #052F18);
+}
+
+
+.gradient-form {
+    height: 100vh !important;
+    background: linear-gradient(to right, #083E20, #0A4E2A, #0E793D, #0A4E2A, #083E20);
+    /*background: linear-gradient(to right, #083E20, #0A4E2A, #0E6237, #0A4E2A, #083E20);*/
+}
+
+.container-login {
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+@media (min-width: 991px) {
+    .gradient-custom-2 {
+        border-top-right-radius: .3rem;
+        border-bottom-right-radius: .3rem;
+    }
+}
+
+.button-login {
+    background: #fccb90;
+    background: -webkit-linear-gradient(to right, #0E6237, #0A4E2A, #083E20, #052F18);
+    background: linear-gradient(to right, #0E6237, #0A4E2A, #083E20, #052F18);
+}
+
+    .button-login:hover {
+        box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
+        background: -webkit-linear-gradient(to left, #0E6237, #0A4E2A, #083E20, #052F18);
+        background: linear-gradient(to left, #0E6237, #0A4E2A, #083E20, #052F18);
+        transform: scale(1.01);
+    }

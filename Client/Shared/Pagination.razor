@@ -1,0 +1,175 @@
+﻿@inject IJSRuntime JS
+
+<div class="d-flex justify-content-between align-items-center w-auto">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination m-0">
+            @if (Pagina > 1)
+            {
+                <li class="page-item pointer-button">
+                    <a class="page-link m-0 text-black" @onclick="() => IrAPagina(1)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-left" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
+                            <path fill-rule="evenodd" d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
+                        </svg>
+                    </a>
+                </li>
+                <li class="page-item pointer-button">
+                    <a class="page-link m-0 text-black" @onclick="() => IrAPagina(Pagina-1)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
+                        </svg>
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <a class="page-link m-0" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-left" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
+                            <path fill-rule="evenodd" d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
+                        </svg>
+                    </a>
+                </li>
+                <li class="page-item disabled">
+                    <a class="page-link m-0" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
+                        </svg>
+                    </a>
+                </li>
+            }
+            @for (int i = _minPag; i <= _maxPag; i++)
+            {
+                int pagina = i;
+                if (pagina != Pagina)
+                {
+                    <li class="page-item pointer-button"><a class="page-link text-black" @onclick="() => IrAPagina(pagina)">@i</a></li>
+                }
+                else
+                {
+                    <li class="page-item pointer-button"><a class="page-link bg-success text-white" @onclick="() => IrAPagina(pagina)">@i</a></li>
+                }
+            }
+            @if (Pagina < TotalPaginas)
+            {
+                <li class="page-item pointer-button">
+                    <a class="page-link m-0 text-black" @onclick="() => IrAPagina(Pagina+1)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" />
+                        </svg>
+                    </a>
+                </li>
+                <li class="page-item pointer-button">
+                    <a class="page-link text-black m-0"@onclick="() => IrAPagina(TotalPaginas)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-right" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                            <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                        </svg>
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <a class="page-link m-0" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" />
+                        </svg>
+                    </a>
+                </li>
+                <li class="page-item disabled">
+                    <a class="page-link m-0" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-right" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
+                            <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
+                        </svg>
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
+    <div class="form-group pointer-button">
+        <label for="cantidadRegistros">Mostrar:</label>
+        <select class="pointer-button" id="cantidadRegistros" @onchange="ModificarTamañoPagina">
+            <option class="pointer-button" selected value="10">10</option>
+            <option class="pointer-button" value="20">20</option>
+            <option class="pointer-button" value="50">50</option>
+            <option class="pointer-button" value="100">100</option>
+            <option class="pointer-button" value="0">Todos</option>
+        </select>
+    </div>
+</div>
+
+@code {
+
+    [Parameter] public int Pagina { get; set; } = 1;
+    [Parameter] public int TamañoPagina { get; set; } = 10;
+    [Parameter] public int TotalPaginas { get; set; } = 10;
+    [Parameter] public Func<int, Task>? NavegarAPagina { get; set; }
+    [Parameter] public Func<int, Task>? CambiarTamañoPagina { get; set; }
+
+    private int _minPag = 1;
+    private int _maxPag = 1;
+
+    private async Task IrAPagina(int pagina)
+    {
+        if (NavegarAPagina != null)
+        {
+            await NavegarAPagina(pagina);
+            ActualizarPaginacion();
+        }
+    }
+
+    private async Task ModificarTamañoPagina(ChangeEventArgs e)
+    {
+        int tamañoPagina;
+        try
+        {
+            tamañoPagina = int.Parse(e.Value!.ToString()!);
+        }
+        catch
+        {
+            return;
+        }
+        if (CambiarTamañoPagina != null)
+        {
+            await CambiarTamañoPagina(tamañoPagina);
+            ActualizarPaginacion();
+        }
+
+    }
+
+    public void ActualizarPaginacion()
+    {
+        _minPag = Pagina - 2;
+        _maxPag = Pagina + 2;
+
+        if(_minPag < 1)
+        {
+            _minPag = 1;
+            if(TotalPaginas < 5)
+            {
+                _maxPag = TotalPaginas;
+            }
+            else
+            {
+                _maxPag = 5;
+            }
+        }
+        else if(_maxPag > TotalPaginas)
+        {
+            _maxPag = TotalPaginas;
+            if(TotalPaginas < 5)
+            {
+                _minPag = 1;
+            }
+            else
+            {
+                _minPag = TotalPaginas - 4;
+            }
+        }
+        StateHasChanged();
+    }
+
+}

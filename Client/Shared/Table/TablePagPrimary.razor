@@ -1,0 +1,45 @@
+﻿@using EnergyDistribution.Client.Shared.Buttons
+@using EnergyDistribution.Client.Shared.Cards
+
+<CardPrimary Title="@Title">
+    
+    @TPreHead
+
+    <table class="table table-hover table-bordered">
+        <thead>
+            <tr class="bg-green align-middle text-center text-white">
+                @THead
+            </tr>
+        </thead>
+        <tbody>
+            @TBody
+        </tbody>
+    </table>
+    <Pagination @ref="_pagination"
+                NavegarAPagina="@NavegarAPagina"
+                CambiarTamañoPagina="@CambiarTamañoPagina"
+                Pagina="@Pagina"
+                TamañoPagina="@TamañoPagina"
+                TotalPaginas="@TotalPaginas" />
+</CardPrimary>
+
+@code {
+
+    [Parameter] public string Title { get; set; } = "";
+    [Parameter] public int Pagina { get; set; } = 1;
+    [Parameter] public int TamañoPagina { get; set; } = 10;
+    [Parameter] public int TotalPaginas { get; set; } = 10;
+    [Parameter] public Func<int, Task> NavegarAPagina { get; set; } = null!;
+    [Parameter] public Func<int, Task> CambiarTamañoPagina { get; set; } = null!;
+    [Parameter] public RenderFragment? TPreHead { get; set; }
+    [Parameter] public RenderFragment? THead { get; set; }
+    [Parameter] public RenderFragment? TBody { get; set; }
+
+    private Pagination? _pagination;
+
+    public void ActualizarPaginacion()
+    {
+        _pagination!.ActualizarPaginacion();
+    }
+
+}

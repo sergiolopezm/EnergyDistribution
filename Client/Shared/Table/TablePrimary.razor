@@ -1,0 +1,26 @@
+﻿@using EnergyDistribution.Client.Shared.Buttons
+@using EnergyDistribution.Client.Shared.Cards
+
+<CardPrimary Title="@Title">
+    
+    @TPreHead
+
+    <table class="table table-hover table-bordered">
+        <thead>
+            <tr class="bg-green align-middle text-center text-white">
+                @THead
+            </tr>
+        </thead>
+        <tbody>
+            @TBody
+        </tbody>
+    </table>
+</CardPrimary>
+
+@code {
+
+    [Parameter] public string Title { get; set; } = "";
+    [Parameter] public RenderFragment? TPreHead { get; set; }
+    [Parameter] public RenderFragment? THead { get; set; }
+    [Parameter] public RenderFragment? TBody { get; set; }
+}
